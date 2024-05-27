@@ -1,0 +1,33 @@
+pipeline{
+    agent{label 'built-in'}
+    tools{ maven 'M3'}
+    stages{
+        stage('Checkout'){
+            steps{
+                git branch: 'main', 
+                credentialsId: 'ma671-45fO28-$28xT',
+                url: 'https://github.com/iCarthaginian/SpringPetClinic.git'
+            }
+        }
+        stage('Build'){
+             steps {
+                sh 'mvn compile'
+                }
+        }
+        stage('Test'){
+            steps {
+                sh 'mvn test -Dsurefire.test.timeout=300s'
+            }
+        }
+        stage('Package'){
+            steps {
+                sh 'mvn package'
+            }
+        }
+        stage('Deploy'){
+            steps {
+                sh 'java -jar /var/lib/jenkins/workspace/PetClinicDeclarativePipeline/target/*.jar'
+            }
+        }
+    }
+}
